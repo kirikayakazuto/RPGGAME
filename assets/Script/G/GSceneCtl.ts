@@ -23,6 +23,8 @@ class GSceneCtl {
         this.doLoadSceneWithProgress(preName, cb);
     }
 
+    
+
 
     private setLoadingDisplay() {
         this.rootNode.getComponent(Loading).showLoading();

@@ -4,6 +4,11 @@ const State = {
     Idle: 0,
     Walk: 1,
 }
+const TargetName = {
+    None: 0,
+    Map : 1,
+    Joystick: 2,
+}
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -25,6 +30,9 @@ export default class NavAgent extends cc.Component {
 
     Speed: cc.Vec2  = cc.v2(0, 0);
 
+    MoveTarget = TargetName.None;
+    MoveDir         = cc.v2(0, 0);
+
 
 
     // onLoad () {}
@@ -45,9 +53,15 @@ export default class NavAgent extends cc.Component {
             this.State = State.Idle;
             return;
         }
-
+        this.MoveTarget = TargetName.Map;
         this.WalkNext = 1;
         this._walkToNext();
+    }
+    /**
+     * 摇杆操作
+     */
+    moveByJoystick(dir: cc.Vec2) {
+        
     }
 
     _walkToNext() {
@@ -72,20 +86,22 @@ export default class NavAgent extends cc.Component {
 
     _walkUpdate(dt: number) {
 
-        this.WalkTime += dt;
-        if(this.WalkTile > this.WalkTotal) {
-            dt -= (this.WalkTime - this.WalkTotal);
-        }
-
-        let sx = this.Speed.x * dt;
-        let sy = this.Speed.y * dt;
-
-        this.node.x += sx;
-        this.node.y += sy;
-
-        if(this.WalkTime > this.WalkTotal) {
-            this.WalkNext ++;
-            this._walkToNext();
+        if(this.MoveTarget == TargetName.Map) {
+            this.WalkTime += dt;
+            if(this.WalkTile > this.WalkTotal) {
+                dt -= (this.WalkTime - this.WalkTotal);
+            }
+    
+            let sx = this.Speed.x * dt;
+            let sy = this.Speed.y * dt;
+    
+            this.node.x += sx;
+            this.node.y += sy;
+    
+            if(this.WalkTime > this.WalkTotal) {
+                this.WalkNext ++;
+                this._walkToNext();
+            }
         }
     }
 
