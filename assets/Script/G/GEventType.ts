@@ -18,13 +18,14 @@ export class GEventBody {
             turn: TurnType.STOP,
             position: cc.v2(0, 0),
             time: 3,
-            // parentNode: null,
+            TileRoadCount: cc.v2(0, 0),
         },
-        setBody: function(turn: number, pos: cc.Vec2, time: number) {
+        setBody: function(turn: number, pos: cc.Vec2, time: number, TileRoadCount: cc.Vec2) {
             this.body.turn = turn;
             this.body.position = pos;
             this.body.time = time;
-            // this.body.parentNode = parentNode;
+            this.body.TileRoadCount = TileRoadCount;
+            
         },
     }
 }

@@ -23,11 +23,15 @@ export default class NewClass extends cc.Component {
     initMap() {
         // 初始化玩家位置
         this.tileMap    = this.getComponent(cc.TiledMap);
+
         let playerObj   = this.tileMap.getObjectGroup("object").getObject("player");
         let pos         = this._getTilePosByPos(playerObj.offset);
         let realPos     = this.tileMap.getLayer("bg").getPositionAt(pos);
 
-        GEventBody.InitPlayerPosition.setBody(TurnType.DOWN, realPos, 1);
+        let cha         = this.tileMap.getMapSize().height - 1;             // tileMap 地图编号是从右上角开始, 而cocos中 从左下角开始 所以要水平翻转
+        let realTile     = cc.v2(pos.x, cha - pos.y);
+
+        GEventBody.InitPlayerPosition.setBody(TurnType.DOWN, realPos, 1, realTile);
         GEventManager.emit(
             GEventBody.InitPlayerPosition.name, 
             GEventBody.InitPlayerPosition.body,

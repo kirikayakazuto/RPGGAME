@@ -47,6 +47,7 @@ export default class NewClass extends cc.Component {
             this.MapNode = cc.instantiate(prefab);
             this.node.addChild(this.MapNode, -1);
             this.MapNode.getComponent(MapCtl).init(this);
+            this.MapNode.getComponent("NavMap").init(this);
             this.PlayerCtl.initNavMap(this.MapNode.getComponent("NavMap")); 
         });
     }

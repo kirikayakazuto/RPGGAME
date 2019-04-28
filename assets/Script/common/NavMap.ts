@@ -1,4 +1,6 @@
 import astar from "./AStart";
+import GObstacleMap from "../G/GObstacleMap";
+import GameRootCtl from "../GameRoot/GameRootCtl"
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -7,11 +9,17 @@ export default class NavMap extends cc.Component {
     @property(Boolean)
     IsDebug = true;
 
-    map: any = null;
-    // onLoad () {}
+    GameRootCtl: GameRootCtl    = null;
+
+    map: GObstacleMap = null;
+
+    init(GameRootCtl: GameRootCtl) {
+        this.GameRootCtl = GameRootCtl;
+        this.map = require("game_map_"+ this.node.name);
+    }
 
     start () {
-        this.map = require("game_map_"+ this.node.name);
+        
     }
 
     astartSearch(srcW: cc.Vec2, dstW: cc.Vec2) {
@@ -39,6 +47,10 @@ export default class NavMap extends cc.Component {
         }
 
         return path_pos;
+    }
+    
+    getMap() {
+        return this.map;
     }
 
     // update (dt) {}

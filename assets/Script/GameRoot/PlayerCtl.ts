@@ -4,6 +4,7 @@ import NavAgent from "../common/NavAgent"
 import NavMap from "../common/NavMap";
 import GameRootCtl from "./GameRootCtl"
 import TouchMoveCtl from "../common/TouchMoveCtl"
+import GObstacleMap from "../G/GObstacleMap";
 
 const {ccclass, property} = cc._decorator;
 
@@ -13,10 +14,13 @@ export default class PlayerCtl extends cc.Component {
     @property(TouchMoveCtl)
     TouchMoveCtl: TouchMoveCtl = null;
 
-    NavAgent: NavAgent = null;
+    NavAgent: NavAgent  = null;
     GameRootCtl: GameRootCtl = null;
 
-    State: PlayerState = -1;
+    State: PlayerState  = -1;
+
+    TileRoadCount        = cc.v2(0, 0)
+    ObstacleMap: GObstacleMap = null;
 
     // 玩家状态
 
@@ -32,9 +36,11 @@ export default class PlayerCtl extends cc.Component {
     init(GameRootCtl: GameRootCtl) {
         this.GameRootCtl = GameRootCtl;
         this.NavAgent = this.getComponent(NavAgent);
+        
     }
     initPosition(data: any) {
         this.node.setPosition(data.position);
+        this.TileRoadCount = data.TileRoadCount;
     }
 
     /**
@@ -50,6 +56,7 @@ export default class PlayerCtl extends cc.Component {
      */
     initNavMap(NavMap: NavMap) {
         this.NavAgent.initNavMap(NavMap);
+        this.ObstacleMap = this.NavAgent.NavMap.getMap();
         this.setState(PlayerState.Ready);
     }
 
@@ -57,7 +64,11 @@ export default class PlayerCtl extends cc.Component {
         if(this.TouchMoveCtl.dir.x == 0 && this.TouchMoveCtl.dir.y == 0) {
             return ;
         }
-        // this.NavAgent.moveByJoystick(this.TouchMoveCtl.dir);
+        this.NavAgent.moveByJoystickOneStep(this.TouchMoveCtl.dir, this);
+
+    }
+
+    moveToNextBrick() {
 
     }
 

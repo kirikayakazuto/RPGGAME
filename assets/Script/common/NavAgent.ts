@@ -1,4 +1,5 @@
 import NavMap from "./NavMap";
+import PlayerCtl from "../GameRoot/PlayerCtl"
 
 const State = {
     Idle: 0,
@@ -60,8 +61,32 @@ export default class NavAgent extends cc.Component {
     /**
      * 摇杆操作
      */
-    moveByJoystick(dir: cc.Vec2) {
-        
+    moveByJoystickOneStep(dir: cc.Vec2, PlayerCtl: PlayerCtl) {
+        if(this.State == State.Walk) {
+            return ;
+        }
+        // 判断目标位置的图块是否是障碍物
+        let obMap = PlayerCtl.ObstacleMap;
+        let isObstacle = obMap.data[(PlayerCtl.TileRoadCount.y + dir.y) * obMap.width + (PlayerCtl.TileRoadCount.x + dir.x)];
+        console.log(isObstacle);
+        if(isObstacle == 1) {
+            return ;
+        }
+
+        PlayerCtl.TileRoadCount.x += dir.x;
+        PlayerCtl.TileRoadCount.y += dir.y;
+
+        let dstX = PlayerCtl.TileRoadCount.x * 32
+        let dstY = PlayerCtl.TileRoadCount.y * 32;
+        this.RoadSet = [this.node.getPosition(), cc.v2(dstX, dstY)];
+
+        if(!this.RoadSet || this.RoadSet.length <= 1) {
+            this.State = State.Idle;
+            return;
+        }
+        this.MoveTarget = TargetName.Map;
+        this.WalkNext = 1;
+        this._walkToNext();
     }
 
     _walkToNext() {
@@ -85,24 +110,23 @@ export default class NavAgent extends cc.Component {
     }
 
     _walkUpdate(dt: number) {
-
-        if(this.MoveTarget == TargetName.Map) {
-            this.WalkTime += dt;
-            if(this.WalkTile > this.WalkTotal) {
-                dt -= (this.WalkTime - this.WalkTotal);
-            }
-    
-            let sx = this.Speed.x * dt;
-            let sy = this.Speed.y * dt;
-    
-            this.node.x += sx;
-            this.node.y += sy;
-    
-            if(this.WalkTime > this.WalkTotal) {
-                this.WalkNext ++;
-                this._walkToNext();
-            }
+        
+        this.WalkTime += dt;
+        if(this.WalkTile > this.WalkTotal) {
+            dt -= (this.WalkTime - this.WalkTotal);
         }
+
+        let sx = this.Speed.x * dt;
+        let sy = this.Speed.y * dt;
+
+        this.node.x += sx;
+        this.node.y += sy;
+
+        if(this.WalkTime > this.WalkTotal) {
+            this.WalkNext ++;
+            this._walkToNext();
+        }
+        
     }
 
     update (dt) {
